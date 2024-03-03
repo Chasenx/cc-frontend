@@ -1,4 +1,5 @@
 <script setup>
+  import axios from 'axios'
 
   import { reactive, ref } from 'vue';
 
@@ -30,24 +31,90 @@
     console.log(ipinfo.value)
   }
 
+  const fakeData = reactive({
+    name: 'fake',
+    url: 'fake.com',
+  })
+
+  const changeData = () => {
+    axios.defaults.baseURL = '/stag--cc-project'
+    const api='/test-json/'
+
+    axios.get(api).then((res)=>{
+      console.log(res.data)
+      fakeData.name = res.data.name
+      fakeData.url = res.data.url
+    }).catch((err)=>{
+      console.log(err)
+    })
+  }
+
+    // data for search
+    const datasource = reactive([
+    {
+      value: 'climbing',
+      label: '爬山',
+    },
+    {
+      value: 'running',
+      label: '跑步',
+    },
+    {
+      value: 'fitness',
+      label: '健身',
+    },
+  ])
+  const selectedValue = ref('running');
+  const selectChange = (value) => {
+    console.log('selectChange', value);
+  }
+
+  const textData = ref('search');
+
 </script>
 
 <template>
-  <h3>简易CC查询系统</h3>
-  <div style="width: 100%; height: 100%;">
-    <bk-table
-      :columns="columns"
-      :data="tableData"
-      :pagination="pagination"
-      :pagination-heihgt="60"
-      @row-click="handleRowClick"
-      @select="handleRowSelect"
-      show-overflow-tooltip
-      height="100%"
-    />
+  <div style="width: 95%; margin: auto;">
+    <h3>CC简易查询系统</h3>
+    <div>
+      <bk-select
+        v-model="selectedValue"
+        class="bk-select"
+        @change="selectChange">
+        <bk-option
+          v-for="(item, index) in datasource"
+          :id="item.value"
+          :key="index"
+          :name="item.label"/>
+      </bk-select>
+      <bk-input v-model="textData"/>
+    </div>
+    <div style="width: 100%; height: 100%;">
+      <bk-table
+        :columns="columns"
+        :data="tableData"
+        :pagination="pagination"
+        :pagination-heihgt="60"
+        @row-click="handleRowClick"
+        @select="handleRowSelect"
+        show-overflow-tooltip
+        height="100%"
+      />
+    </div>
+    <hr>
+    <bk-button @click="changeData">Change</bk-button>
+    <h3>{{ fakeData.name }} + {{ fakeData.url }}</h3>
   </div>
+
 </template>
 
 <style scoped>
+  .style-demo {
+    display: flex;
+  }
 
+  .bk-select {
+    width: 200px;
+    margin-right: 20px;
+  }
 </style>
