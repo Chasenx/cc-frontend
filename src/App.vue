@@ -5,12 +5,11 @@
   import { DATA_FIX_COLUMNS } from './options';
 
 
-  const tableData = new Array(Math.ceil(Math.random() * 100) + 100).fill('')
+  const tableData = new Array(Math.ceil(Math.random() * 50) + 50).fill('')
     .map((_, index) => ({
       ip: `${index}--192.168.0.x`,
       source: `${index}_QQ`,
       create_by: `user-admin-${index}`,
-      status: '创建中',
       create_time: `2018-05-25 15:02:24.${index}`,
     }));
 
@@ -35,7 +34,7 @@
 
 <template>
   <h3>简易CC查询系统</h3>
-  <div style="width: 100%; height: 500px;">
+  <div style="width: 100%; height: 100%;">
     <bk-table
       :columns="columns"
       :data="tableData"

@@ -18,24 +18,24 @@ export const DATA_FIX_COLUMNS = [
     {
         "label": "名称/内网IP",
         "field": "ip",
-        "minWidth": 400,
+        "minWidth": 200,
         "fixed": true
     },
     {
         "label": "来源",
         "field": "source",
         "filter": true,
-        "minWidth": 280
+        "minWidth": 200
     },
     {
         "label": "创建者",
         "field": "create_by",
-        "width": 280
+        "width": 200
     },
     {
         "label": "更新时间",
         "field": "create_time",
-        "width": 280
+        "width": 200
     },
     {
         "label": "状态",
