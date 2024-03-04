@@ -16,6 +16,9 @@
   const selectedSet = ref('全部')
   const selectedModule = ref('全部')
 
+  const isShow = ref(false)
+  const displayHost = ref({})
+
   const getTableData = () => {
     axios.defaults.baseURL = myUrl
     
@@ -55,9 +58,10 @@
   
   const handleRowClick = (e, row, index, rows, source) => {
     Object.assign(activeRowInfo, { e, row, index, rows, source });
-    console.log('selected ip is', row.host_innerip);
-    ipinfo.value = !ipinfo.value
-    console.log(ipinfo.value)
+    displayHost.value = row
+    console.log('handleRowClick', displayHost.value);
+    isShow.value = true
+    console.log(isShow.value)
   }
 
   const fakeData = reactive({
@@ -166,6 +170,17 @@
 <template>
   <div style="width: 95%; margin: auto;">
     <h3>CC简易查询系统</h3>
+    <bk-sideslider
+      v-model:isShow="isShow"
+      title="主机信息"
+      width="50%"
+      quick-close>
+      <template #default>
+        <div style="height: 1200px;">
+          {{ displayHost }}
+        </div>
+      </template>
+    </bk-sideslider>
     <div>
       <!-- 业务下拉菜单 -->
       业务
