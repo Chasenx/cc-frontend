@@ -5,14 +5,43 @@
 
   import { DATA_FIX_COLUMNS } from './options';
 
+  const myUrl = 'http://dev.bkpaas.ce.bktencent.com:8000/'
 
-  const tableData = new Array(Math.ceil(Math.random() * 50) + 50).fill('')
-    .map((_, index) => ({
-      ip: `${index}--192.168.0.x`,
-      source: `${index}_QQ`,
-      create_by: `user-admin-${index}`,
-      create_time: `2018-05-25 15:02:24.${index}`,
-    }));
+  // 获取 table 数据
+  const tableData = reactive({
+    host_data: []
+  })
+
+  const selectedBiz = ref('全部')
+  const selectedSet = ref('全部')
+  const selectedModule = ref('全部')
+
+  const getTableData = () => {
+    axios.defaults.baseURL = myUrl
+    
+    let queryData = {}
+    if (selectedBiz.value !== '全部' && selectedBiz.value !== 0) {
+      queryData.business = selectedBiz.value
+    }
+    if (selectedSet.value !== '全部' && selectedSet.value !== 0) {
+      queryData.set = selectedSet.value
+    }
+    if (selectedModule.value !== '全部' && selectedModule.value !== 0) {
+      queryData.module = selectedModule.value
+    }
+    const api = '/hosts?' + new URLSearchParams(queryData).toString()
+    console.log(api)
+
+
+    axios.get(api).then((res)=>{
+      tableData.host_data = res.data.data
+    }).catch((err)=>{
+      console.log(err)
+    })    
+    
+  }
+  getTableData()
+
 
   const pagination = ref({ count: tableData.length, limit: 10 });
   const columns = DATA_FIX_COLUMNS.map(item => ({ ...item }));
@@ -26,7 +55,7 @@
   
   const handleRowClick = (e, row, index, rows, source) => {
     Object.assign(activeRowInfo, { e, row, index, rows, source });
-    console.log('selected ip is', row.ip);
+    console.log('selected ip is', row.host_innerip);
     ipinfo.value = !ipinfo.value
     console.log(ipinfo.value)
   }
@@ -49,27 +78,88 @@
     })
   }
 
-    // data for search
-    const datasource = reactive([
-    {
-      value: 'climbing',
-      label: '爬山',
-    },
-    {
-      value: 'running',
-      label: '跑步',
-    },
-    {
-      value: 'fitness',
-      label: '健身',
-    },
-  ])
-  const selectedValue = ref('running');
-  const selectChange = (value) => {
-    console.log('selectChange', value);
+  // data for search
+  const textData = ref('search');
+  
+
+  // 业务选项
+
+  const bizs = reactive([])
+
+  function getBizs(){
+    axios.defaults.baseURL = myUrl
+    const api='business/'
+
+    axios.get(api).then((res)=>{
+      const new_data = res.data.data
+      new_data.unshift({biz_id: 0, biz_name: '全部'})
+      bizs.splice(0, bizs.length, ...new_data)
+    }).catch((err)=>{
+      console.log(err)
+    })
+  }
+  getBizs()
+
+  // 集群选项
+  const sets = reactive([])
+
+  function getSets() {
+    axios.defaults.baseURL = myUrl
+    let biz_id = selectedBiz.value
+
+    const api=`set?business=${biz_id}`
+    axios.get(api).then((res)=>{
+      const new_data = res.data.data
+      new_data.unshift({set_id: 0, set_name: '全部'})
+      sets.splice(0, sets.length, ...new_data)
+    }).catch((err)=>{
+      console.log(err)
+    })    
   }
 
-  const textData = ref('search');
+  // 模块选项
+  const modules = reactive([])
+  function getModules() {
+    axios.defaults.baseURL = myUrl
+    let set_id = selectedSet.value
+
+    const api=`module?set=${set_id}`
+    axios.get(api).then((res)=>{
+      const new_data = res.data.data
+      new_data.unshift({module_id: 0, module_name: '全部'})
+      modules.splice(0, modules.length, ...new_data)
+    }).catch((err)=>{
+      console.log(err)
+    })    
+  }
+
+  // 业务下拉菜单改变
+  const bizChange = (value) => {
+    console.log('selectChange', value)
+    getSets()
+    selectedSet.value = '全部'
+    selectedModule.value = '全部'
+  }
+
+  // 集群下拉菜单改变
+  const setChange = (value) => {
+    console.log('selectChange', value)
+    getModules()
+    selectedModule.value = '全部'
+  }
+
+  // 更新 CMDB 数据
+  const updateCMDB = () => {
+    console.log('update CMDB')
+    // axios.defaults.baseURL = myUrl
+    // const api='/sync-cmdb/'
+    // axios.get(api).then((res)=>{
+    //   console.log(res.data)
+    // }).catch((err)=>{
+    //   console.log(err)
+    // })
+  }
+
 
 </script>
 
@@ -77,22 +167,48 @@
   <div style="width: 95%; margin: auto;">
     <h3>CC简易查询系统</h3>
     <div>
+      <!-- 业务下拉菜单 -->
+      业务
       <bk-select
-        v-model="selectedValue"
+        v-model="selectedBiz"
         class="bk-select"
-        @change="selectChange">
+        @change="bizChange">
         <bk-option
-          v-for="(item, index) in datasource"
-          :id="item.value"
+          v-for="(item, index) in bizs"
+          :id="item.biz_id"
           :key="index"
-          :name="item.label"/>
+          :name="item.biz_name"/>
       </bk-select>
-      <bk-input v-model="textData"/>
+      <!-- 集群下拉菜单 -->
+      集群
+      <bk-select
+        v-model="selectedSet"
+        class="bk-select"
+        @change="setChange">
+        <bk-option
+          v-for="(item, index) in sets"
+          :id="item.set_id"
+          :key="index"
+          :name="item.set_name"/>
+      </bk-select>
+      <!-- 模块下拉菜单 -->
+      模块
+      <bk-select
+        v-model="selectedModule"
+        class="bk-select">
+        <bk-option
+          v-for="(item, index) in modules"
+          :id="item.module_id"
+          :key="index"
+          :name="item.module_name"/>
+      </bk-select>
+      <bk-button @click="getTableData">查找</bk-button>
+      <!-- <bk-input v-model="textData"/> -->
     </div>
     <div style="width: 100%; height: 100%;">
       <bk-table
         :columns="columns"
-        :data="tableData"
+        :data="tableData.host_data"
         :pagination="pagination"
         :pagination-heihgt="60"
         @row-click="handleRowClick"
@@ -102,6 +218,7 @@
       />
     </div>
     <hr>
+    <bk-button @click="updateCMDB">更新</bk-button>
     <bk-button @click="changeData">Change</bk-button>
     <h3>{{ fakeData.name }} + {{ fakeData.url }}</h3>
   </div>
@@ -114,6 +231,7 @@
   }
 
   .bk-select {
+    display: inline-block;
     width: 200px;
     margin-right: 20px;
   }
