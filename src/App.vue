@@ -6,6 +6,7 @@
   import { DATA_FIX_COLUMNS } from './options';
 
   const myUrl = 'http://dev.bkpaas.ce.bktencent.com:8000/'
+  // const myUrl = '/stag--cc-project/'
 
   // 获取 table 数据
   const tableData = reactive({
@@ -53,10 +54,23 @@
     console.log('handleRowSelect', arg);
   }
 
+
+  // 选中主机信息
   const activeRowInfo = reactive({})
+  const activeHostInfo = ref({})
   const ipinfo = ref(true)
   
   const handleRowClick = (e, row, index, rows, source) => {
+    axios.defaults.baseURL = myUrl
+    let host_id = row.host_id
+
+    const api=`host-info?host=${host_id}`
+    axios.get(api).then((res)=>{
+      activeHostInfo.value = res.data
+    }).catch((err)=>{
+      console.log(err)
+    }) 
+    // to  delete
     Object.assign(activeRowInfo, { e, row, index, rows, source });
     displayHost.value = row
     console.log('handleRowClick', displayHost.value);
@@ -177,7 +191,10 @@
       quick-close>
       <template #default>
         <div style="height: 1200px;">
+          <h3>主机信息</h3>
           {{ displayHost }}
+          <h3>IP信息</h3>
+          {{ activeHostInfo.value }}
         </div>
       </template>
     </bk-sideslider>
