@@ -58,7 +58,6 @@
   // 选中主机信息
   const activeRowInfo = reactive({})
   const activeHostInfo = ref({})
-  const ipinfo = ref(true)
   
   const handleRowClick = (e, row, index, rows, source) => {
     axios.defaults.baseURL = myUrl
@@ -71,30 +70,18 @@
       console.log(err)
     }) 
     // to  delete
-    Object.assign(activeRowInfo, { e, row, index, rows, source });
+    // Object.assign(activeRowInfo, { e, row, index, rows, source });
     displayHost.value = row
-    console.log('handleRowClick', displayHost.value);
+    // console.log('handleRowClick', displayHost.value);
     isShow.value = true
-    console.log(isShow.value)
+    // console.log(isShow.value)
   }
 
-  const fakeData = reactive({
-    name: 'fake',
-    url: 'fake.com',
-  })
+  // const fakeData = reactive({
+  //   name: 'fake',
+  //   url: 'fake.com',
+  // })
 
-  const changeData = () => {
-    axios.defaults.baseURL = '/stag--cc-project'
-    const api='/test-json/'
-
-    axios.get(api).then((res)=>{
-      console.log(res.data)
-      fakeData.name = res.data.name
-      fakeData.url = res.data.url
-    }).catch((err)=>{
-      console.log(err)
-    })
-  }
 
   // data for search
   const textData = ref('search');
@@ -169,15 +156,14 @@
   // 更新 CMDB 数据
   const updateCMDB = () => {
     console.log('update CMDB')
-    // axios.defaults.baseURL = myUrl
-    // const api='/sync-cmdb/'
-    // axios.get(api).then((res)=>{
-    //   console.log(res.data)
-    // }).catch((err)=>{
-    //   console.log(err)
-    // })
+    axios.defaults.baseURL = myUrl
+    const api='/sync-cmdb/'
+    axios.get(api).then((res)=>{
+      console.log(res.data)
+    }).catch((err)=>{
+      console.log(err)
+    })
   }
-
 
 </script>
 
@@ -191,10 +177,13 @@
       quick-close>
       <template #default>
         <div style="height: 1200px;">
-          <h3>主机信息</h3>
-          {{ displayHost }}
-          <h3>IP信息</h3>
-          {{ activeHostInfo.value }}
+          <!-- <h3>主机信息</h3> -->
+          <!-- {{ displayHost }}
+          <h3>IP信息</h3> -->
+          <div v-for="value in activeHostInfo.data" style="margin-left: 40px;">
+            <p>{{ value.bk_property_name }}:  {{ value.bk_property_value }}</p>
+          </div>
+
         </div>
       </template>
     </bk-sideslider>
@@ -251,8 +240,6 @@
     </div>
     <hr>
     <bk-button @click="updateCMDB">更新</bk-button>
-    <bk-button @click="changeData">Change</bk-button>
-    <h3>{{ fakeData.name }} + {{ fakeData.url }}</h3>
   </div>
 
 </template>
