@@ -5,8 +5,8 @@
 
   import { DATA_FIX_COLUMNS } from './options';
 
-  const myUrl = 'http://dev.bkpaas.ce.bktencent.com:8000/'
-  // const myUrl = '/stag--cc-project/'
+  // const myUrl = 'http://dev.bkpaas.ce.bktencent.com:8000/'
+  const myUrl = '/stag--cc-project/'
 
   // 获取 table 数据
   const tableData = reactive({
@@ -165,9 +165,138 @@
     })
   }
 
+  // 导航栏
+  import { TreeApplicationShape } from 'bkui-vue/lib/icon';
+  const collapse = ref(true);
+  const navigationType = ref('top-bottom');
+  const handleCollapse = (v) => {
+    collapse.value = !v;
+  };
+
+
 </script>
 
 <template>
+  <div class="navigation-demo">
+
+    <bk-navigation
+      class="navigation-demo-content"
+      :default-open="collapse"
+      :navigation-type="navigationType"
+      side-title="CC简易查询系统"
+      @toggle="handleCollapse"
+    >
+      <template #menu>
+        <bk-menu
+          :collapse="collapse"
+          active-key="主机查询"
+        >
+          <bk-menu-item key="主机查询">
+            主机查询
+          </bk-menu-item>
+        
+          <bk-menu-item key="文件查询">
+            文件查询
+          </bk-menu-item>
+
+          <bk-menu-item key="备份记录">
+            备份记录
+          </bk-menu-item>
+
+        </bk-menu>
+      </template>
+      <!-- 先把图标注释掉 -->
+      <!-- <template #side-icon>
+        <tree-application-shape />
+      </template> -->
+      <div class="content-demo">
+        <!-- 内容 -->
+        <bk-sideslider
+          v-model:isShow="isShow"
+          title="主机信息"
+          width="50%"
+          quick-close>
+          <template #default>
+            <div style="height: 1200px;">
+              <!-- <h3>主机信息</h3> -->
+              <!-- {{ displayHost }}
+              <h3>IP信息</h3> -->
+              <div v-for="value in activeHostInfo.data" style="margin-left: 40px;">
+                <p>{{ value.bk_property_name }}:  {{ value.bk_property_value }}</p>
+              </div>
+
+            </div>
+          </template>
+        </bk-sideslider>
+        <div>
+          <!-- 业务下拉菜单 -->
+          业务
+          <bk-select
+            v-model="selectedBiz"
+            class="bk-select"
+            @change="bizChange">
+            <bk-option
+              v-for="(item, index) in bizs"
+              :id="item.biz_id"
+              :key="index"
+              :name="item.biz_name"/>
+          </bk-select>
+          <!-- 集群下拉菜单 -->
+          集群
+          <bk-select
+            v-model="selectedSet"
+            class="bk-select"
+            @change="setChange">
+            <bk-option
+              v-for="(item, index) in sets"
+              :id="item.set_id"
+              :key="index"
+              :name="item.set_name"/>
+          </bk-select>
+          <!-- 模块下拉菜单 -->
+          模块
+          <bk-select
+            v-model="selectedModule"
+            class="bk-select">
+            <bk-option
+              v-for="(item, index) in modules"
+              :id="item.module_id"
+              :key="index"
+              :name="item.module_name"/>
+          </bk-select>
+          <bk-button @click="getTableData" theme="primary">查找</bk-button>
+          <div style="width: 40px; display: inline-block;"></div> 
+          <bk-button @click="updateCMDB" theme="success">同步最新</bk-button>
+          <!-- <bk-input v-model="textData"/> -->
+        </div>
+        <div style="width: 100%; height: 100%;">
+          <bk-table
+            :columns="columns"
+            :data="tableData.host_data"
+            :pagination="pagination"
+            :pagination-heihgt="60"
+            @row-click="handleRowClick"
+            @select="handleRowSelect"
+            show-overflow-tooltip
+            height="100%"
+          />
+        </div>
+        
+        <!-- <bk-button @click="updateCMDB">更新</bk-button> -->
+        <!-- 内容结尾 -->
+      </div>
+      <!-- <template #header>
+        <div
+          class="header-demo"
+        >
+          这里是头部导航
+        </div>
+      </template> -->
+    </bk-navigation>
+  </div>
+
+  <hr>
+
   <div style="width: 95%; margin: auto;">
     <h3>CC简易查询系统</h3>
     <bk-sideslider
@@ -253,5 +382,24 @@
     display: inline-block;
     width: 200px;
     margin-right: 20px;
+  }
+
+  .navigation-demo {
+    &-radio {
+      margin: 10px 0 20px 0;
+    }
+
+    &-content {
+      border: 1px solid #ddd;
+
+      .content-demo {
+        font-size: 24px;
+      }
+
+      .header-demo {
+        margin-right: auto;
+        font-size: 20px;
+      }
+    }
   }
 </style>
