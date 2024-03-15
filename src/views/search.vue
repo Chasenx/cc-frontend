@@ -113,23 +113,36 @@
     let queryData = {
         dir: dir.value,
         suffix: suffix.value,
-        hosts: ip_address.value,
+        hosts: ip_address.value.replace(/(\r\n|\n|\r)/gm, ","),
     }
     const api = '/search-files?' + new URLSearchParams(queryData).toString()
     console.log(api)
 
-    tableData.host_data = [{"ip": "10.0.48.18", "filenames": "yddaemon.log", "size": 50, "operation": '链接'}, {"ip": "10.0.48.46", "filenames": "yddaemon.log", "size": 51}, {"ip": "10.0.48.45", "filenames": "yddaemon.log", "size": 51}, {"ip": "10.0.48.48", "filenames": "", "size": 0}, {"ip": "10.0.48.37", "filenames": "yddaemon.log", "size": 51}, {"ip": "10.0.48.32", "filenames": "", "size": 0}, {"ip": "10.0.48.8", "filenames": "yddaemon.log", "size": 51}, {"ip": "10.0.48.7", "filenames": "", "size": 0}]
+    // tableData.host_data = [{"ip": "10.0.48.46", "filenames": "yddaemon.log", "size": 51, "dir": "/tmp"}, {"ip": "10.0.48.32", "filenames": "", "size": 0, "dir": "/tmp"}, {"ip": "10.0.48.7", "filenames": "", "size": 0, "dir": "/tmp"}, {"ip": "10.0.48.48", "filenames": "", "size": 0, "dir": "/tmp"}, {"ip": "10.0.48.8", "filenames": "yddaemon.log", "size": 51, "dir": "/tmp"}, {"ip": "10.0.48.45", "filenames": "yddaemon.log", "size": 51, "dir": "/tmp"}, {"ip": "10.0.48.18", "filenames": "yddaemon.log", "size": 50, "dir": "/tmp"}, {"ip": "10.0.48.37", "filenames": "yddaemon.log", "size": 51, "dir": "/tmp"}]
 
 
-    // axios.get(api).then((res)=>{
-    //   // console.log(res.data)
-    //   tableData.host_data = res.data.data
-    //   // page_count.value = res.data.total
-    // }).catch((err)=>{
-    //   console.log(err)
-    // })
+    axios.get(api).then((res)=>{
+      // console.log(res.data)
+      if (res.data.data.length > 0) {
+        tableData.host_data = res.data.data
+        // 拼接出备份链接地址
+        tableData.host_data.forEach((item) => {
+          if (item.size > 0) {
+            let backup_query = {
+              dir: item.dir,
+              files: item.filenames,
+              hosts: item.ip,
+            }
+            const backup_api = '/backup-files?' + new URLSearchParams(backup_query).toString()
+            item.operation = backup_api
+          }
+        })
+      }
+      // page_count.value = res.data.total
+    }).catch((err)=>{
+      console.log(err)
+    })
   }
-
 
 </script>
 

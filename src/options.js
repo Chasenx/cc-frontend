@@ -1,5 +1,5 @@
-export const myUrl = 'http://dev.bkpaas.ce.bktencent.com:8000/'
-// export const myUrl = '/stag--cc-project/'
+// export const myUrl = 'http://dev.bkpaas.ce.bktencent.com:8000/'
+export const myUrl = '/stag--cc-project/'
 
 export const route_prefix = '/stag--cc-project/'
 export const route_table = {
@@ -93,6 +93,8 @@ export const DATA_SEARCH_COLUMNS = [
     {
         "label": "操作",
         "field": "operation",
+        "width": 600,
+        "fixed": true,
     },
 ]
 
