@@ -9,6 +9,8 @@
     router.push(path)
   }
 
+  // 父组件传进来的 active_key
+  const props = defineProps(["active_key"])
 
   // 导航栏
   import { TreeApplicationShape } from 'bkui-vue/lib/icon';
@@ -51,7 +53,7 @@
       <template #menu>
         <bk-menu
           :collapse="collapse"
-          active-key="index"
+          :active-key="props.active_key"
           @click="handleMenuClick"
         >
           <bk-menu-item key="index">

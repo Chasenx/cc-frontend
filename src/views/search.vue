@@ -1,15 +1,9 @@
 <script setup>
   import axios from 'axios'
   import { reactive, ref } from 'vue';
-  import { DATA_SEARCH_COLUMNS, myUrl, route_table } from '../options';
-  import { useRouter } from 'vue-router'
-  import { useI18n } from 'vue-i18n'
+  import { DATA_SEARCH_COLUMNS, myUrl } from '../options'
+  import Sidebar from "../components/sidebar.vue"
 
-  const router = useRouter()
-  const goto = (path) => {
-    // console.log('goto', path)
-    router.push(path)
-  }
 
   // 获取 table 数据
   const tableData = reactive({
@@ -81,23 +75,6 @@
   }
 
 
-  // 导航栏
-  import { TreeApplicationShape } from 'bkui-vue/lib/icon';
-  const collapse = ref(true);
-  const navigationType = ref('top-bottom');
-  const handleCollapse = (v) => {
-    collapse.value = !v;
-  }
-  const handleMenuClick = (key) => {
-    // const table = {
-    //   index: '/',
-    //   search: '/search',
-    //   backup: '/backup'
-    // }
-    // console.log('handleMenuClick', key.key)
-    goto(route_table[key.key])
-  };
-
   const ip_address = ref('10.0.48.18,10.0.48.46')
   const dir = ref('/tmp')
   const suffix = ref('log')
@@ -143,127 +120,64 @@
     })
   }
 
-  // 国际化
-  const { t, locale } = useI18n({ useScope: 'global' })
-
-  const language = ref(locale.value === 'zh' ? false : true)
-  
-  const change_lang = () => {
-    if (language.value) {
-      locale.value = 'en'
-    } else {
-      locale.value = 'zh'
-    }
-    title.value = t('title')
-  }
-
-  const title = ref(t('title'))
 
 </script>
 
 <template>
-  <div class="navigation-demo">
+  <Sidebar active_key="search">
+    <!-- 内容 -->
+    
+    <div style="width: 400px; display: inline-block;">
+        {{ $t('search.host_ip') }}
+        <bk-input style="display: inline-block;"
+        v-model="ip_address"
+        type="textarea"
+        placeholder="请输入主机IP"
+        class="mb8"
+        /> 
+    </div>
+    <br>
+    <div style="width: 400px; display: inline-block;">
+      {{ $t('search.dir') }}
+        <bk-input style="display: inline-block;"
+        v-model="dir"
+        type="textarea"
+        placeholder="/tmp"
+        class="mb8"
+        /> 
+    </div>
+    <br>
+    <div style="width: 400px; display: inline-block;">
+      {{ $t('search.suffix') }}
+        <bk-input style="display: inline-block;"
+        v-model="suffix"
+        type="textarea"
+        placeholder="log"
+        class="mb8"
+        /> 
+    </div>
+    <br>
+    <bk-button @click="search" theme="success">{{ $t('search.search_btn') }}</bk-button>
 
-    <bk-navigation
-      class="navigation-demo-content"
-      :default-open="collapse"
-      :navigation-type="navigationType"
-      :side-title="title"
-      @toggle="handleCollapse"
-    >
-      <template #menu>
-        <bk-menu
-          :collapse="collapse"
-          active-key="search"
-          @click="handleMenuClick"
-        >
-          <bk-menu-item key="index">
-            {{ $t('host.item_name') }}
-          </bk-menu-item>
-        
-          <bk-menu-item key="search">
-            {{ $t('search.item_name') }}
-          </bk-menu-item>
+    <div style="width: 100%; height: 100%;">
+      <bk-table
+        :columns="columns"
+        :data="tableData.host_data"
+        :pagination="pagination"
+        :pagination-heihgt="60"
+        @row-click="handleRowClick"
+        @select="handleRowSelect"
+        show-overflow-tooltip
+        height="100%"
+      />
+    </div>
+    
 
-          <bk-menu-item key="backup">
-            {{ $t('backup.item_name') }}
-          </bk-menu-item>
-
-        </bk-menu>
-      </template>
-      <!-- 先把图标注释掉 -->
-      <!-- <template #side-icon>
-        <tree-application-shape />
-      </template> -->
-      <div class="content-demo">
-        <!-- 内容 -->
-        
-        <div style="width: 400px; display: inline-block;">
-           主机IP
-           <bk-input style="display: inline-block;"
-            v-model="ip_address"
-            type="textarea"
-            placeholder="请输入主机IP"
-            class="mb8"
-            /> 
-        </div>
-        <br>
-        <div style="width: 400px; display: inline-block;">
-           目录
-           <bk-input style="display: inline-block;"
-            v-model="dir"
-            type="textarea"
-            placeholder="/tmp"
-            class="mb8"
-            /> 
-        </div>
-        <br>
-        <div style="width: 400px; display: inline-block;">
-           文件后缀
-           <bk-input style="display: inline-block;"
-            v-model="suffix"
-            type="textarea"
-            placeholder="log"
-            class="mb8"
-            /> 
-        </div>
-        <br>
-        <bk-button @click="search" theme="success">立即查询</bk-button>
-
-        <div style="width: 100%; height: 100%;">
-          <bk-table
-            :columns="columns"
-            :data="tableData.host_data"
-            :pagination="pagination"
-            :pagination-heihgt="60"
-            @row-click="handleRowClick"
-            @select="handleRowSelect"
-            show-overflow-tooltip
-            height="100%"
-          />
-        </div>
-        
-
-        <!-- 内容结尾 -->
-      </div>
-      <template #header>
-        <div style="color:white;" > 
-          {{ $t('lang') }}
-          <bk-switcher
-            v-model="language"
-            show-text
-            @change="change_lang"
-          />
-        </div>
-      </template>
-    </bk-navigation>
-  </div>
+    <!-- 内容结尾 -->
+  </Sidebar>
 </template>
 
 <style scoped>
-  .style-demo {
-    display: flex;
-  }
 
   .bk-select {
     display: inline-block;
@@ -271,22 +185,4 @@
     margin-right: 20px;
   }
 
-  .navigation-demo {
-    &-radio {
-      margin: 10px 0 20px 0;
-    }
-
-    &-content {
-      border: 1px solid #ddd;
-
-      .content-demo {
-        font-size: 24px;
-      }
-
-      .header-demo {
-        margin-right: auto;
-        font-size: 20px;
-      }
-    }
-  }
 </style>

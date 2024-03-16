@@ -1,17 +1,8 @@
 <script setup>
   import axios from 'axios'
-
   import { reactive, ref } from 'vue';
-
-  import { DATA_BACKUP_COLUMNS, myUrl, route_table } from '../options';
-
-  import { useRouter } from 'vue-router'
-
-  const router = useRouter()
-  const goto = (path) => {
-    router.push(path)
-  }
-
+  import { DATA_BACKUP_COLUMNS, myUrl } from '../options';
+  import Sidebar from "../components/sidebar.vue"
 
   // 获取 table 数据
   const tableData = reactive({
@@ -60,91 +51,29 @@
   }
 
 
-  // 导航栏
-  const collapse = ref(true);
-  const navigationType = ref('top-bottom');
-  const handleCollapse = (v) => {
-    collapse.value = !v;
-  }
-  const handleMenuClick = (key) => {
-    // const table = {
-    //   index: '/',
-    //   search: '/search',
-    //   backup: '/backup'
-    // }
-    // console.log('handleMenuClick', key.key)
-    goto(route_table[key.key])
-  };
-
-
 </script>
 
 <template>
-  <div class="navigation-demo">
-
-    <bk-navigation
-      class="navigation-demo-content"
-      :default-open="collapse"
-      :navigation-type="navigationType"
-      side-title="CC简易查询系统"
-      @toggle="handleCollapse"
-    >
-      <template #menu>
-        <bk-menu
-          :collapse="collapse"
-          active-key="backup"
-          @click="handleMenuClick"
-        >
-          <bk-menu-item key="index">
-            主机查询
-          </bk-menu-item>
+  <Sidebar active_key="backup">
+    <!-- 内容  :pagination="pagination" -->
+    <div style="width: 100%; height: 100%;">
+      <bk-table
+        :columns="columns"
+        :data="tableData.host_data"
+        :pagination="pagination"
         
-          <bk-menu-item key="search">
-            文件查询
-          </bk-menu-item>
-
-          <bk-menu-item key="backup">
-            备份记录
-          </bk-menu-item>
-
-        </bk-menu>
-      </template>
-      <!-- 先把图标注释掉 -->
-      <!-- <template #side-icon>
-        <tree-application-shape />
-      </template> -->
-      <div class="content-demo">
-        <!-- 内容  :pagination="pagination" -->
-        <div style="width: 100%; height: 100%;">
-          <bk-table
-            :columns="columns"
-            :data="tableData.host_data"
-            :pagination="pagination"
-            
-            :remote-pagination="true"
-            @page-value-change="handlePageValueChange"
-            @page-limit-change="handlePageLimitChange"
-            show-overflow-tooltip
-            height="100%"
-          />
-        </div>
-        <!-- 内容结尾 -->
-      </div>
-      <!-- <template #header>
-        <div
-          class="header-demo"
-        >
-          这里是头部导航
-        </div>
-      </template> -->
-    </bk-navigation>
-  </div>
+        :remote-pagination="true"
+        @page-value-change="handlePageValueChange"
+        @page-limit-change="handlePageLimitChange"
+        show-overflow-tooltip
+        height="100%"
+      />
+    </div>
+    <!-- 内容结尾 -->
+  </Sidebar>
 </template>
 
 <style scoped>
-  .style-demo {
-    display: flex;
-  }
 
   .bk-select {
     display: inline-block;
@@ -152,22 +81,4 @@
     margin-right: 20px;
   }
 
-  .navigation-demo {
-    &-radio {
-      margin: 10px 0 20px 0;
-    }
-
-    &-content {
-      border: 1px solid #ddd;
-
-      .content-demo {
-        font-size: 24px;
-      }
-
-      .header-demo {
-        margin-right: auto;
-        font-size: 20px;
-      }
-    }
-  }
 </style>
