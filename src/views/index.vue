@@ -187,9 +187,10 @@
   };
 
   // 国际化
-  const language = ref(false)
   const { t, locale } = useI18n({ useScope: 'global' })
   
+  const language = ref(locale.value === 'zh' ? false : true)
+
   const change_lang = () => {
     if (language.value) {
       locale.value = 'en'

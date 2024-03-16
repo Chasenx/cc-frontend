@@ -1,11 +1,10 @@
 <script setup>
   import axios from 'axios'
-
   import { reactive, ref } from 'vue';
-
   import { DATA_SEARCH_COLUMNS, myUrl, route_table } from '../options';
-
   import { useRouter } from 'vue-router'
+  import { useI18n } from 'vue-i18n'
+
   const router = useRouter()
   const goto = (path) => {
     // console.log('goto', path)
@@ -144,6 +143,22 @@
     })
   }
 
+  // 国际化
+  const { t, locale } = useI18n({ useScope: 'global' })
+
+  const language = ref(locale.value === 'zh' ? false : true)
+  
+  const change_lang = () => {
+    if (language.value) {
+      locale.value = 'en'
+    } else {
+      locale.value = 'zh'
+    }
+    title.value = t('title')
+  }
+
+  const title = ref(t('title'))
+
 </script>
 
 <template>
@@ -153,7 +168,7 @@
       class="navigation-demo-content"
       :default-open="collapse"
       :navigation-type="navigationType"
-      side-title="CC简易查询系统"
+      :side-title="title"
       @toggle="handleCollapse"
     >
       <template #menu>
@@ -163,15 +178,15 @@
           @click="handleMenuClick"
         >
           <bk-menu-item key="index">
-            主机查询
+            {{ $t('host.item_name') }}
           </bk-menu-item>
         
           <bk-menu-item key="search">
-            文件查询
+            {{ $t('search.item_name') }}
           </bk-menu-item>
 
           <bk-menu-item key="backup">
-            备份记录
+            {{ $t('backup.item_name') }}
           </bk-menu-item>
 
         </bk-menu>
@@ -231,13 +246,16 @@
 
         <!-- 内容结尾 -->
       </div>
-      <!-- <template #header>
-        <div
-          class="header-demo"
-        >
-          这里是头部导航
+      <template #header>
+        <div style="color:white;" > 
+          {{ $t('lang') }}
+          <bk-switcher
+            v-model="language"
+            show-text
+            @change="change_lang"
+          />
         </div>
-      </template> -->
+      </template>
     </bk-navigation>
   </div>
 </template>
