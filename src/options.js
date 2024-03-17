@@ -8,59 +8,62 @@ export const route_table = {
     backup: route_prefix + 'backup'
   }
 
+// 国际化
+import i18n from './i18n'
+const { t } = i18n.global
 
 export const DATA_FIX_COLUMNS = [
     {
-        "label": "序号",
+        "label": t('host.index'),
         "type": "index",
         "sort": true,
         "width": 80,
         "fixed": true
     },
     {
-        "label": "主机名",
+        "label": t('host.host_name'),
         "field": "host_name",
         "fixed": true
     },
     {
-        "label": "内网IP",
+        "label": t('host.host_innerip'),
         "field": "host_innerip",
         "fixed": true,
         "sort": true,
     },
     {
-        "label": "外网IP",
+        "label": t('host.host_outerip'),
         "field": "host_outerip",
         "sort": true,
     },
     {
-        "label": "业务",
+        "label": t('host.biz_name'),
         "field": "biz_name",
         "sort": true,
     },
     {
-        "label": "集群",
+        "label": t('host.set_name'),
         "field": "set_name",
         "sort": true,
     },
     {
-        "label": "模块",
+        "label": t('host.module_name'),
         "field": "module_name",
         "fixed": "right",
         "sort": true,
     },
     {
-        "label": "负责人",
+        "label": t('host.operator'),
         "field": "operator",
         "fixed": "right"
     },
     {
-        "label": "备份负责人",
+        "label": t('host.bak_operator'),
         "field": "bak_operator",
         "fixed": "right"
     },
     {
-        "label": "云厂商",
+        "label": t('host.cloud_vendor'),
         "field": "cloud_vendor",
         "fixed": "right"
     }
@@ -68,30 +71,30 @@ export const DATA_FIX_COLUMNS = [
 
 export const DATA_SEARCH_COLUMNS = [
     {
-        "label": "序号",
+        "label": t('search.index'),
         "type": "index",
         // "sort": true,
         "width": 80,
         "fixed": true
     },
     {
-        "label": "IP",
+        "label": t('search.ip_address'),
         "field": "ip",
     },
     {
-        "label": "文件列表",
+        "label": t('search.file_list'),
         "field": "filenames",
     },
     {
-        "label": "文件数量",
+        "label": t('search.file_count'),
         "field": "file_count",
     },
     {
-        "label": "文件总大小",
+        "label": t('search.file_size'),
         "field": "size",
     },
     {
-        "label": "操作",
+        "label": t('search.operation'),
         "field": "operation",
         "width": 600,
         "fixed": true,
@@ -100,38 +103,38 @@ export const DATA_SEARCH_COLUMNS = [
 
 export const DATA_BACKUP_COLUMNS = [
     {
-        "label": "序号",
+        "label": t('backup.index'),
         "type": "index",
         "width": 80,
         "fixed": true
     },
     {
-        "label": "IP",
+        "label": t('backup.host_ip'),
         "field": "host_ip",
     },
     {
-        "label": "文件目录",
+        "label": t('backup.dir'),
         "field": "dir",
     },
     {
-        "label": "文件名后缀",
+        "label": t('backup.suffix'),
         "field": "suffix",
         
     },
     {
-        "label": "备份人",
+        "label": t('backup.backup_person'),
         "field": "backup_user",
     },
     {
-        "label": "备份时间",
+        "label": t('backup.backup_time'),
         "field": "backup_time",
     },
     {
-        "label": "备份文件名",
+        "label": t('backup.backup_files'),
         "field": "backup_files",
     },
     {
-        "label": "JOB链接",
+        "label": t('backup.job_link'),
         "field": "job_link",
         "width": 400,
         "fixed": true

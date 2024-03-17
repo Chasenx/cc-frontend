@@ -1,5 +1,5 @@
 <script setup>
-  import { ref } from 'vue';
+  import { ref, watch } from 'vue';
   import { route_table } from '../options';
   import { useRouter } from 'vue-router'
   import { useI18n } from 'vue-i18n'
@@ -25,6 +25,11 @@
 
   // 国际化
   const { t, locale } = useI18n({ useScope: 'global' })
+  // 从本地存储中获取保存的语言
+  const savedLang = localStorage.getItem('language');
+  if (savedLang) {
+    locale.value = savedLang;
+  }
   const language = ref(locale.value === 'zh' ? false : true)
 
   const change_lang = () => {
@@ -37,6 +42,10 @@
   }
 
   const title = ref(t('title'))
+
+  watch(locale, (newVal) => {
+    localStorage.setItem('language', newVal);
+  })
 
 </script>
 
